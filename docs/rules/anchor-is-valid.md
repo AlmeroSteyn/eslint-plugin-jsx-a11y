@@ -1,0 +1,113 @@
+# anchor-is-valid
+
+The HTML `<a>` element, with a valid `href` attribute, is formally defined as representing a **hyperlink**. That is, a link between one HTML document and another, or between one location inside an HTML document and another location inside the same document.
+
+In fact, the interactive, underlined `<a>` element has become so synonymous with web navigation that this expectation has become entrenched inside browsers, assistive technologies such as screen readers and in how people generally expect the internet to behave. In short, anchors should navigate.
+
+The use of JavaScript frameworks and libraries, like _React_, has made it very easy to add or subtract functionality from the standard HTML elements. This has led to _anchors_ often being used in applications based on how they look and function instead of what they represent.
+
+Whilst it is possible, for example, to turn the `<a>` element into a fully functional `<button>` element with ARIA, the native user agent implementations of HTML elements are to be preferred over custom ARIA solutions.
+
+## How do I resolve this error?
+
+### Case: The anchor should be a button
+
+The native user agent implementations of the `<a>` and `<button>` elements not only differ in how they look and how they act when activated, but also in how the user is expected to interact with them. Both are perfectly clickable when using a mouse, but keyboard users expect `<a>` to activate on `enter` only and `<button>` to activate on _both_ `enter` and `space`.
+
+This is exacerbated by the expectation sighted users have of how _buttons_ and _anchors_ work based on their appearance. Therefore we find that using _anchors_ as _buttons_ can easily create confusion without a relatively complicated ARIA and CSS implementation that only serves to create an element HTML already offers and browsers already implement fully accessibly.
+
+We are aware that sometimes _anchors_ are used instead of _buttons_ to achieve a specific visual design. When using the `<button>` element this can still be achieved with styling but, due to the meaning many people attach to the standard underlined `<a>` due its appearance, please reconsider this in the design.
+
+Consider the following:
+```jsx
+<a href="javascript:void(0)" onClick={foo} >Perform action</a>
+<a href="#" onClick={foo} >Perform action</a>
+<a onClick={foo} >Perform action</a>
+```
+
+All these _anchor_ implementations indicate that the element is only used to execute JavaScript code. All the above should be replaced with:
+```jsx
+<button onClick={foo} >Perform action</button>
+```
+
+
+
+### Case: The anchor has no href attribute or an invalid href attribute
+
+An `<a>` element without an `href` attribute no longer functions as a hyperlink. That means that it can no longer accept keyboard focus or be clicked on. The documentation for [no-noninteractive-tabindex](no-noninteractive-tabindex.md) explores this further. Preferably use another element (such as `div` or `span`) for display of text.
+
+To properly function as a hyperlink, the `href` attribute should be present and also contain a valid _uri_. _JavaScript_ strings, empty values or using only **#** are not considered valid `href` values.
+
+Valid `href` attributes values are:
+```jsx
+<a href="/some/valid/uri" >Navigate to page</a>
+<a href="/some/valid/uri#top" >Navigate to page and location</a>
+<a href="#top" >Navigate to internal page location</a>
+```
+
+
+### References
+  1. [WebAIM - Introduction to Links and Hypertext](http://webaim.org/techniques/hypertext/)
+  1. [Links vs. Buttons in Modern Web Applications](https://marcysutton.com/links-vs-buttons-in-modern-web-applications/)
+  1. [Using ARIA - Notes on ARIA use in HTML](https://www.w3.org/TR/using-aria/#NOTES)
+
+## Rule details
+
+This rule takes one optional object argument of type object:
+
+```json
+{
+    "rules": {
+        "jsx-a11y/href-no-hash": [ 2, {
+            "components": [ "Link" ],
+            "specialLink": [ "hrefLeft", "hrefRight" ]
+          }],
+    }
+}
+```
+
+For the `components` option, these strings determine which JSX elements (**always including** `<a>`) should be checked for the props designated in the `specialLink` options (**always including** `href`). This is a good use case when you have a wrapper component that simply renders an `<a>` element (like in React):
+
+### Succeed
+```jsx
+<a href="https://github.com" />
+<a href="#section" />
+<a href="foo" />
+<a href="/foo/bar" />
+<a href={someValidPath} />
+<a href="https://github.com" onClick={foo} />
+<a href="#section" onClick={foo} />
+<a href="foo" onClick={foo} />
+<a href="/foo/bar" onClick={foo} />
+<a href={someValidPath} onClick={foo} />
+```
+
+### Fail
+
+Anchors should be a button:
+```jsx
+<a onClick={foo} />
+<a href="#" onClick={foo} />
+<a href={"#"} onClick={foo} />
+<a href={`#`} onClick={foo} />
+<a href="javascript:void(0)" onClick={foo} />
+<a href={"javascript:void(0)"} onClick={foo} />
+<a href={`javascript:void(0)`} onClick={foo} />
+```
+
+Missing `href` attribute:
+```jsx
+<a />
+<a href={undefined} />
+<a href={null} />
+```
+
+Invalid `href` attribute:
+```jsx
+<a href="#" />
+<a href={"#"} />
+<a href={`#`} />
+<a href="javascript:void(0)" />
+<a href={"javascript:void(0)"} />
+<a href={`javascript:void(0)`} />
+```

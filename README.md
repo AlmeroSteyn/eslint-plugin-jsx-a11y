@@ -94,6 +94,7 @@ You can also enable all the recommended rules at once. Add `plugin:jsx-a11y/reco
 
 - [accessible-emoji](docs/rules/accessible-emoji.md): Enforce emojis are wrapped in <span> and provide screenreader access.
 - [anchor-has-content](docs/rules/anchor-has-content.md): Enforce all anchors to contain accessible content.
+- [anchor-is-valid](docs/rules/anchor-is-valid.md): Enforce all anchors are valid, navigable elements.
 - [aria-activedescendant-has-tabindex](docs/rules/aria-activedescendant-has-tabindex.md): Enforce elements with aria-activedescendant are tabbable.
 - [aria-props](docs/rules/aria-props.md): Enforce all `aria-*` props are valid.
 - [aria-proptypes](docs/rules/aria-proptypes.md): Enforce ARIA state and property values are valid.
